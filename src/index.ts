@@ -1,15 +1,9 @@
-import './extend';
+import './matcher';
 import { fnNested } from './chainedMock';
 import { nestingArgs, NestingArgs } from './args';
 
 export {};
 declare global {
-  namespace jest {
-    interface Matchers<R> {
-      toHaveBeenNestedCalledWith(nestedArgs: any[][]): R;
-    }
-  }
-
   // eslint-disable-next-line no-var
   var nest: {
     fn: typeof fnNested;
