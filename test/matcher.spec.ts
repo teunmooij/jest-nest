@@ -1,9 +1,9 @@
 describe('toHaveBeenNestedCalledWith tests', () => {
   it('passes when expected nested arguments match', () => {
-    const curryFn = nest.fn();
-    curryFn('a')('b');
+    const curryFn = nest.fn(3);
+    curryFn('a')()('b');
 
-    expect(curryFn).toHaveBeenNestedCalledWith([['a'], ['b']]);
+    expect(curryFn).toHaveBeenNestedCalledWith([['a'], [], ['b']]);
   });
 
   it('fails when expected nested arguments do not match', () => {
@@ -12,7 +12,19 @@ describe('toHaveBeenNestedCalledWith tests', () => {
 
     const test = () => expect(curryFn).toHaveBeenNestedCalledWith([['a'], ['c']]);
 
-    expect(test).toThrow('Expected to match, but found ...');
+    expect(test).toThrow(`Expected calls to match
+Expected: fn(a)(c)
+Actual:
+  fn(a)(b)`);
+  });
+
+  it('fails when root function was never called', () => {
+    const curryFn = nest.fn();
+
+    const test = () => expect(curryFn).toHaveBeenNestedCalledWith(nest.args('a'));
+    expect(test).toThrow(`Expected the nested function to have been called
+Expected: fn(a)
+Actual: Number of calls: 0`);
   });
 
   it('passes when expecting nested arguments not to match', () => {
@@ -28,7 +40,7 @@ describe('toHaveBeenNestedCalledWith tests', () => {
 
     const test = () => expect(curryFn).not.toHaveBeenNestedCalledWith([['a'], ['b']]);
 
-    expect(test).toThrow('Expected not to match');
+    expect(test).toThrow('Expected calls not to match fn(a)(b)');
   });
 
   it('paases when only part of the chain is expected to match', () => {
