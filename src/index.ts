@@ -1,3 +1,6 @@
+// import './extent';
+import { fnNested } from './chainedMock';
+
 export {};
 declare global {
   namespace jest {
@@ -5,6 +8,15 @@ declare global {
     //   myCustomMatcher(): R;
     // }
   }
+
+  // eslint-disable-next-line no-var
+  var nest: {
+    fn: typeof fnNested;
+  };
 }
 
-export * from './chainedMock';
+globalThis.nest = {
+  fn: fnNested,
+};
+
+export { fnNested };

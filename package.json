@@ -1,15 +1,15 @@
 {
-  "name": "jest-fn-curried",
+  "name": "jest-nest",
   "version": "0.0.1",
-  "description": "jest mock for curried functions",
+  "description": "jest mock for nested functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "rimraf dist && tsc",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --quiet --fix",
-    "test": "jest -c jest.config.js",
-    "test:coverage": "jest -c jest.config.js --verbose --collectCoverage"
+    "test": "jest -c jest.config.ts",
+    "test:coverage": "jest -c jest.config.ts --verbose --collectCoverage"
   },
   "dependencies": {
     "@types/jest": "^29.2.3",
@@ -30,6 +30,7 @@
     "prettier": "^2.7.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
     "typescript": "^4.9.3"
   },
   "lint-staged": {
@@ -38,10 +39,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/teunmooij/jest-fn-curried.git"
+    "url": "git+https://github.com/teunmooij/jest-nest.git"
   },
   "keywords": [
     "jest",
+    "nested",
     "curry",
     "curried",
     "jest.fn"

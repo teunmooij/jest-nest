@@ -1,8 +1,6 @@
-import { fnCurried } from '../src';
-
 describe('chainedMock tests', () => {
   it('creates a curried mock', () => {
-    const x = fnCurried();
+    const x = nest.fn();
     x('a')('b');
 
     expect(x).toHaveBeenCalledTimes(1);
@@ -11,7 +9,7 @@ describe('chainedMock tests', () => {
   });
 
   it('it returns a curried result', () => {
-    const x = fnCurried(4, () => 'done');
+    const x = nest.fn(4, () => 'done');
     const y = x('a')('b');
     const z = y('c')('d');
 
@@ -24,7 +22,7 @@ describe('chainedMock tests', () => {
   });
 
   it('captures multiple chains', () => {
-    const f = fnCurried(3);
+    const f = nest.fn(3);
     const x = f('a');
     x('c');
     const y = f('b');
