@@ -7,15 +7,15 @@ describe('toHaveBeenNestedCalledWith tests', () => {
   });
 
   it('fails when expected nested arguments do not match', () => {
-    const curryFn = nest.fn();
-    curryFn('a')('b');
+    const curryFn = nest.fn(3);
+    curryFn('a')()('b');
 
-    const test = () => expect(curryFn).toHaveBeenNestedCalledWith([['a'], ['c']]);
+    const test = () => expect(curryFn).toHaveBeenNestedCalledWith([['a'], [], ['c']]);
 
     expect(test).toThrow(`Expected calls to match
-Expected: fn(a)(c)
+Expected: fn(a)()(c)
 Actual:
-  fn(a)(b)`);
+  fn(a)()(b)`);
   });
 
   it('fails when root function was never called', () => {
