@@ -8,7 +8,7 @@ export const fnCurried = (
   tailImplementation?: (...args: any[]) => any,
   callPath: any[][] = [],
 ): ChainedMock => {
-  if (depth < 1) throw new Error('depth must be a whole number greater then 0');
+  if (depth < 1 || depth % 1 !== 0) throw new Error('depth must be a whole number greater than 0');
 
   if (depth === 1) {
     const tail = jest.fn(tailImplementation) as ChainedMock;
