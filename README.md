@@ -8,6 +8,28 @@ jest mock for nested and curried functions
 $ npm install jest-nest
 ```
 
+## Configuration
+
+Create a `setup.ts` file:
+
+```typescript
+import 'jest-nest';
+```
+
+And load it in your jest config:
+
+```typescript
+import { Config } from 'jest';
+
+const config: Config = {
+  ...
+  setupFilesAfterEnv: ['./test/setup.ts'],
+};
+
+export default config;
+
+```
+
 ## Usage
 
 ```typescript
