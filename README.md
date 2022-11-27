@@ -34,11 +34,31 @@ export default config;
 
 ```typescript
 it('expects nested function call', () => {
-  const nestedFn = nest.fn(3, () => 'my return value');
+  const nestedFn = nest.fn(
+    3, // depth, optional, default: 2
+    () => 'my return value', // tail implementation, optional
+  );
 
   const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
 
   expect(nestedFn).toHaveBeenNestedCalledWith(nest.args('a', 'b')({ foo: expect.any(String) })('c'));
+  expect(result).toBe('my return value');
+});
+```
+
+or
+
+```typescript
+import { fnNested, nestingArgs, NestingArgs } from 'jest-nest';
+
+it('expects nested function call', () => {
+  const nestedFn = fnNested(3, () => 'my return value');
+
+  const result = nestedFn('a', 'b')({ foo: 'bar', baz: 1 })('c');
+
+  const expectedArgs: NestingArgs = nestingArgs('a', 'b')(expect.objectContaining({ foo: expect.any(String) }))('c');
+
+  expect(nestedFn).toHaveBeenNestedCalledWith(expectedArgs);
   expect(result).toBe('my return value');
 });
 ```
