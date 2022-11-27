@@ -62,4 +62,17 @@ Actual: Number of calls: 0`);
 
     expect(curryFn).toHaveBeenNestedCalledWith(nest.args(expect.objectContaining({ foo: expect.any(String) }))('b'));
   });
+
+  it('throws if expected is not a nesting mock', () => {
+    const test = () => expect(jest.fn()).toHaveBeenNestedCalledWith([]);
+
+    expect(test).toThrow('Actual must be a Nesting mock.');
+  });
+
+  it('throws if expected is not an array', () => {
+    const curryFn = nest.fn();
+    const test = () => expect(curryFn).toHaveBeenNestedCalledWith('a' as any);
+
+    expect(test).toThrow('Args must be of type NestingArgs or any[][].');
+  });
 });

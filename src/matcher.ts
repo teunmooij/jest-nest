@@ -47,13 +47,13 @@ function toHaveBeenNestedCalledWith(
   args: any[][] | NestingArgs,
 ): ExpectationResult {
   if (!isNestingMock(actual)) {
-    throw new Error('Actual must be a Nesting mock');
+    throw new Error('Actual must be a Nesting mock.');
   }
 
   const expected = isNestingArgs(args) ? args.args : args;
 
   if (!Array.isArray(expected)) {
-    throw new Error('Args must be of type Array<Array<any>>');
+    throw new Error('Args must be of type NestingArgs or any[][].');
   }
 
   const calls = getCalls(actual);
@@ -81,10 +81,7 @@ Actual: Number of calls: 0`,
     message: () => `Expected calls to match
 Expected: ${printCall(expected)}
 Actual:
-  ${calls
-    .sort((a, b) => b.length - a.length)
-    .map(m => printCall(m))
-    .join('\n  ')}`,
+  ${calls.map(m => printCall(m)).join('\n  ')}`,
     pass: false,
   };
 }

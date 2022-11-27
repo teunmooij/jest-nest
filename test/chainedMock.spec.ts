@@ -38,4 +38,14 @@ describe('chainedMock tests', () => {
     expect(y).toHaveBeenCalledTimes(1);
     expect(y).toHaveBeenCalledWith('d');
   });
+
+  it('throws when depth is smaller than 1', () => {
+    const test = () => nest.fn(0);
+    expect(test).toThrow('Depth must be a whole number greater than 0.');
+  });
+
+  it('throws when depth is not a whole number', () => {
+    const test = () => nest.fn(2.1);
+    expect(test).toThrow('Depth must be a whole number greater than 0.');
+  });
 });

@@ -3,7 +3,7 @@ export type NestingMock = jest.Mock & {
 };
 
 export const fnNested = (depth = 2, tailImplementation?: (...args: any[]) => any, callPath: any[][] = []): NestingMock => {
-  if (depth < 1 || depth % 1 !== 0) throw new Error('depth must be a whole number greater than 0');
+  if (depth < 1 || depth % 1 !== 0) throw new Error('Depth must be a whole number greater than 0.');
 
   if (depth === 1) {
     const tail = jest.fn(tailImplementation) as NestingMock;
