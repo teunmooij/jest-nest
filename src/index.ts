@@ -1,5 +1,5 @@
 import './matcher';
-import { fnNested } from './chainedMock';
+import { fnNested, NestingMock } from './chainedMock';
 import { nestingArgs, NestingArgs } from './args';
 
 export {};
@@ -16,4 +16,4 @@ globalThis.nest = {
   args: nestingArgs,
 };
 
-export { fnNested, nestingArgs, NestingArgs };
+export { fnNested, nestingArgs, NestingArgs, NestingMock };
