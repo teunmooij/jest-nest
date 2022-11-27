@@ -9,7 +9,8 @@
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --quiet --fix",
     "test": "jest -c jest.config.ts",
-    "test:coverage": "jest -c jest.config.ts --verbose --collectCoverage"
+    "test:coverage": "jest -c jest.config.ts --verbose --collectCoverage",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@types/jest": "^29.2.3",
