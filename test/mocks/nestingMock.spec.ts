@@ -1,3 +1,5 @@
+import { NestingMock } from '../../src';
+
 describe('nestingMock tests', () => {
   it('creates a curried mock', () => {
     const x = nest.fn();
@@ -47,5 +49,17 @@ describe('nestingMock tests', () => {
   it('throws when depth is not a whole number', () => {
     const test = () => nest.fn(2.1);
     expect(test).toThrow('Depth must be a whole number greater than 0.');
+  });
+
+  it('provides the tail access to the callPath', () => {
+    const tail = jest.fn(function (this: NestingMock, arg1: string) {
+      expect(arg1).toBe('b');
+      expect(this.callPath).toEqual([['a']]);
+    });
+
+    const f = nest.fn(2, tail);
+    f('a')('b');
+
+    expect(tail).toHaveBeenCalledTimes(1);
   });
 });

@@ -135,3 +135,16 @@ declare global {
   };
 }
 ```
+
+## Version history
+
+###v2.0
+
+- Curried jest mock
+- Nesting mock binding to the tail function, to provide access to the callPath
+
+### v1.0:
+
+- Nested jest mock
+- Nesting args helper
+- `toHaveBeenNestedCalledWith` jest custom matcher

@@ -44,7 +44,7 @@ const printCall = (args: any[][]) => `fn(${args.map(call => call.join(', ')).joi
 /**
  * Performs expectation on the nested mock the have been called
  * @param {NestingMock} actual The mock on which to verify the expectations
- * @param {NestingArgs|any[][]} args Consequetive args expected to have been called on the mock
+ * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
  */
 function toHaveBeenNestedCalledWith(
   this: MatcherState & MatcherUtils,
@@ -102,7 +102,7 @@ declare global {
     interface Matchers<R> {
       /**
        * Performs expectation on the nested mock the have been called
-       * @param {NestingArgs|any[][]} args Consequetive args expected to have been called on the mock
+       * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
        */
       toHaveBeenNestedCalledWith(nestedArgs: NestingArgs | any[][]): R;
     }
