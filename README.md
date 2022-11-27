@@ -4,7 +4,11 @@
 
 # jest-nest
 
-jest mock for nested and curried functions
+Jest mocks for curried and nested functions
+
+- Create mock or spy for curried function with any number of parameters
+- Create mock for nested function of any depth
+- Easy to use expectation
 
 ## Installation
 
@@ -14,7 +18,7 @@ $ npm install jest-nest
 
 ## Configuration
 
-Create a `setup.ts` file:
+Create a `setup` file:
 
 ```typescript
 import 'jest-nest';
@@ -36,6 +40,41 @@ export default config;
 
 ## Usage
 
+### Curried functions
+
+```typescript
+it('expects curried function call', () => {
+  const mockImplementationOrSpyFunction = (a, b, c, d) => 'my return value';
+  const curryFn = nest.curry(mockImplementationOrSpyFunction);
+
+  const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
+
+  // Make any expectation against curryFn.uncurried like you would with any jest.Mock
+  expect(curryFn.uncurried).toHaveBeenCalledWith('a', 'b', { foo: expect.any(String) }, 'c');
+  // Or make expectations on how the mock was called
+  expect(curryFn).toHaveBeenNestedCalledWith(nest.args('a', 'b')({ foo: expect.any(String) })('c'));
+
+  expect(result).toBe('my return value');
+});
+```
+
+or without an implementation
+
+```typescript
+it('expects curried function call', () => {
+  const numberOfArguments = 4;
+  const curryFn = nest.curry(numberOfArguments);
+
+  const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
+
+  expect(curryFn.uncurried).toHaveBeenCalledWith('a', 'b', { foo: expect.any(String) }, 'c');
+});
+```
+
+### Nested functions
+
+For nested functions with a fixed depth of nesting and possibly with optional arguments, the nesting mock can be used.
+
 ```typescript
 it('expects nested function call', () => {
   const nestedFn = nest.fn(
@@ -50,19 +89,62 @@ it('expects nested function call', () => {
 });
 ```
 
-or
+## Api reference
+
+### Mocks
 
 ```typescript
-import { fnNested, nestingArgs, NestingArgs } from 'jest-nest';
+export type NestingMock = jest.Mock & {
+  callPath: any[][];
+};
 
-it('expects nested function call', () => {
-  const nestedFn = fnNested(3, () => 'my return value');
+export type CurryMock = NestingMock & {
+  uncurried: jest.Mock;
+};
 
-  const result = nestedFn('a', 'b')({ foo: 'bar', baz: 1 })('c');
+export declare function fnCurried(mockImplementation: (...args: any[]) => any): CurryMock;
+export declare function fnCurried(argumentLength: number): CurryMock;
 
-  const expectedArgs: NestingArgs = nestingArgs('a', 'b')(expect.objectContaining({ foo: expect.any(String) }))('c');
-
-  expect(nestedFn).toHaveBeenNestedCalledWith(expectedArgs);
-  expect(result).toBe('my return value');
-});
+export declare function fnNested(depth?: number, tailImplementation?: (...args: any[]) => any): NestingMock;
 ```
+
+### Expectations
+
+```typescript
+namespace jest {
+  interface Matchers<R> {
+    toHaveBeenNestedCalledWith(nestedArgs: any[][] | NestingArgs): R;
+  }
+}
+
+export type NestingArgs = {
+  (...args: any[]): NestingArgs;
+  args: any[][];
+};
+export declare function nestingArgs(...args: any[]): NestingArgs;
+```
+
+### Global exports
+
+```typescript
+declare global {
+  var nest: {
+    fn: typeof fnNested;
+    curry: typeof fnCurried;
+    args: typeof nestingArgs;
+  };
+}
+```
+
+## Version history
+
+###v2.0
+
+- Curried jest mock
+- Nesting mock binding to the tail function, to provide access to the callPath
+
+### v1.0:
+
+- Nested jest mock
+- Nesting args helper
+- `toHaveBeenNestedCalledWith` jest custom matcher

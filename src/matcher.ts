@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 import { ExpectationResult, MatcherState, MatcherUtils } from 'expect';
 import { NestingArgs } from './args';
-import { NestingMock } from './chainedMock';
+import { NestingMock } from './mocks/nestingMock';
 
 const isNestingMock = (value: unknown): value is NestingMock => Boolean(value) && 'callPath' in (value as any);
 const isNestingArgs = (value: unknown): value is NestingArgs => Boolean(value) && Array.isArray((value as any).args);
@@ -41,10 +41,15 @@ const getMatches = (context: MatcherState & MatcherUtils, actual: any[][][], exp
 
 const printCall = (args: any[][]) => `fn(${args.map(call => call.join(', ')).join(')(')})`;
 
+/**
+ * Performs expectation on the nested mock the have been called
+ * @param {NestingMock} actual The mock on which to verify the expectations
+ * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
+ */
 function toHaveBeenNestedCalledWith(
   this: MatcherState & MatcherUtils,
   actual: unknown,
-  args: any[][] | NestingArgs,
+  args: NestingArgs | any[][],
 ): ExpectationResult {
   if (!isNestingMock(actual)) {
     throw new Error('Actual must be a Nesting mock.');
@@ -59,7 +64,7 @@ function toHaveBeenNestedCalledWith(
   const calls = getCalls(actual);
   const matches = getMatches(this, calls, expected);
 
-  if (!matches.length) {
+  if (!calls.length) {
     return {
       message: () => `Expected the nested function to have been called
 Expected: ${printCall(expected)}
@@ -95,7 +100,11 @@ export {};
 declare global {
   namespace jest {
     interface Matchers<R> {
-      toHaveBeenNestedCalledWith(nestedArgs: any[][] | NestingArgs): R;
+      /**
+       * Performs expectation on the nested mock the have been called
+       * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
+       */
+      toHaveBeenNestedCalledWith(nestedArgs: NestingArgs | any[][]): R;
     }
   }
 }
