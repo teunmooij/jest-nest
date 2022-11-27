@@ -1,3 +1,6 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/teunmooij/jest-nest/badge.svg)](https://snyk.io/test/github/teunmooij/jest-nest)
+[![npm version](https://badge.fury.io/js/jest-nest.svg)](https://badge.fury.io/js/jest-nest)
+
 # jest-nest
 
 jest mock for nested and curried functions
