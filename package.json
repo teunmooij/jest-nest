@@ -1,6 +1,6 @@
 {
   "name": "jest-nest",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "jest mock for nested and curried functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
