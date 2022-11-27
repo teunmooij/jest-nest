@@ -17,6 +17,7 @@ jobs:
 
       - run: npm ci
 
+      - run: npm test
       - run: npm run build
       - run: npm config set '//registry.npmjs.org/:_authToken' "${{ secrets.NPM_TOKEN }}"
       - run: npm publish --access public
