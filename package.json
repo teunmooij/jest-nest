@@ -1,6 +1,6 @@
 {
   "name": "jest-nest",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "jest mock for nested and curried functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,7 +56,7 @@
   "author": "Teun Mooij",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/teunmooij/jest-fn-curried/issues"
+    "url": "https://github.com/teunmooij/jest-nest/issues"
   },
-  "homepage": "https://github.com/teunmooij/jest-fn-curried#readme"
+  "homepage": "https://github.com/teunmooij/jest-nest#readme"
 }
