@@ -1,7 +1,7 @@
 {
   "name": "jest-nest",
-  "version": "2.0.1",
-  "description": "jest mock for nested and curried functions",
+  "version": "2.0.2",
+  "description": "jest mock for curried and chained functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
