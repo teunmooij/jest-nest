@@ -4,10 +4,10 @@
 
 # jest-nest
 
-Jest mocks for curried and nested functions
+Jest mocks for curried and chained functions
 
 - Create mock or spy for curried function with any number of parameters
-- Create mock for nested function of any depth
+- Create mock for chained function of any depth
 - Easy to use expectation
 
 ## Installation
@@ -71,7 +71,7 @@ it('expects curried function call', () => {
 });
 ```
 
-### Nested functions
+### Chained functions
 
 For nested functions with a fixed depth of nesting and possibly with optional arguments, the nesting mock can be used.
 
@@ -138,7 +138,7 @@ declare global {
 
 ## Version history
 
-###v2.0
+### v2.0
 
 - Curried jest mock
 - Nesting mock binding to the tail function, to provide access to the callPath
