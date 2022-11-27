@@ -1,7 +1,7 @@
 import { expect } from '@jest/globals';
 import { ExpectationResult, MatcherState, MatcherUtils } from 'expect';
 import { NestingArgs } from './args';
-import { NestingMock } from './chainedMock';
+import { NestingMock } from './mocks/nestingMock';
 
 const isNestingMock = (value: unknown): value is NestingMock => Boolean(value) && 'callPath' in (value as any);
 const isNestingArgs = (value: unknown): value is NestingArgs => Boolean(value) && Array.isArray((value as any).args);
@@ -59,7 +59,7 @@ function toHaveBeenNestedCalledWith(
   const calls = getCalls(actual);
   const matches = getMatches(this, calls, expected);
 
-  if (!matches.length) {
+  if (!calls.length) {
     return {
       message: () => `Expected the nested function to have been called
 Expected: ${printCall(expected)}

@@ -1,15 +1,17 @@
-describe('chainedMock tests', () => {
+describe('curryMock tests', () => {
   it('creates a curried mock', () => {
-    const x = nest.fn();
+    const x = nest.curry(2);
     x('a')('b');
 
     expect(x).toHaveBeenCalledTimes(1);
     expect(x).toHaveBeenCalledWith('a');
     expect(x.mock.results[0].value).toHaveBeenCalledWith('b');
+    expect(x.uncurried).toHaveBeenCalledTimes(1);
+    expect(x.uncurried).toHaveBeenCalledWith('a', 'b');
   });
 
   it('it returns a curried result', () => {
-    const x = nest.fn(4, () => 'done');
+    const x = nest.curry((a, b, c, d) => 'done');
     const y = x('a')('b');
     const z = y('c')('d');
 
@@ -19,10 +21,12 @@ describe('chainedMock tests', () => {
     expect(x).toHaveBeenCalledWith('a');
     expect(x.mock.results[0].value).toHaveBeenCalledWith('b');
     expect(x.mock.results[0].value.mock.results[0].value).toHaveBeenCalledWith('c');
+    expect(x.uncurried).toHaveBeenCalledTimes(1);
+    expect(x.uncurried).toHaveBeenCalledWith('a', 'b', 'c', 'd');
   });
 
   it('captures multiple chains', () => {
-    const f = nest.fn(3);
+    const f = nest.curry(2);
     const x = f('a');
     x('c');
     const y = f('b');
@@ -37,15 +41,20 @@ describe('chainedMock tests', () => {
 
     expect(y).toHaveBeenCalledTimes(1);
     expect(y).toHaveBeenCalledWith('d');
+    expect(x.uncurried).toHaveBeenCalledTimes(2);
+    expect(x.uncurried).toHaveBeenCalledWith('a', 'c');
+    expect(x.uncurried).toHaveBeenCalledWith('b', 'd');
   });
 
-  it('throws when depth is smaller than 1', () => {
-    const test = () => nest.fn(0);
-    expect(test).toThrow('Depth must be a whole number greater than 0.');
-  });
+  it('supports full currying', () => {
+    const f = nest.curry(4);
+    f('a')('b')('c')('d');
+    f('e', 'f')('g', 'h');
+    f('i', 'j', 'k')('l');
 
-  it('throws when depth is not a whole number', () => {
-    const test = () => nest.fn(2.1);
-    expect(test).toThrow('Depth must be a whole number greater than 0.');
+    expect(f.uncurried).toHaveBeenCalledTimes(3);
+    expect(f.uncurried).toHaveBeenNthCalledWith(1, 'a', 'b', 'c', 'd');
+    expect(f.uncurried).toHaveBeenNthCalledWith(2, 'e', 'f', 'g', 'h');
+    expect(f.uncurried).toHaveBeenNthCalledWith(3, 'i', 'j', 'k', 'l');
   });
 });
