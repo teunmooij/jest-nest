@@ -33,19 +33,20 @@ const fnCurriedInternal = (length: number, mockImplementation: jest.Mock, callPa
 /**
  * Creates a jest mock for a curried function
  * @param {(...args: any[]) => any} mockImplementation Implementation of this mock or function to spy on
+ * @param {number} [arity] total number of arguments for the curried function, provide only if it can't be derived from 'mockImplementation'
  * @returns {CurryMock} the mock
  */
-export function fnCurried(mockImplementation: (...args: any[]) => any): CurryMock;
+export function fnCurried(mockImplementation: (...args: any[]) => any, arity?: number): CurryMock;
 /**
  * Creates a mock for a curried function
- * @param {number} argumentLength total number of arguments for the curried function
+ * @param {number} arity total number of arguments for the curried function
  * @returns {CurryMock} the mock
  */
-export function fnCurried(argumentLength: number): CurryMock;
-export function fnCurried(option: ((...args: any[]) => any) | number): CurryMock {
+export function fnCurried(arity: number): CurryMock;
+export function fnCurried(option: ((...args: any[]) => any) | number, arity?: number): CurryMock {
   if (typeof option === 'function') {
     const { length } = option;
-    return fnCurriedInternal(length, jest.fn(option));
+    return fnCurriedInternal(arity || length, jest.fn(option));
   }
   return fnCurriedInternal(option, jest.fn());
 }

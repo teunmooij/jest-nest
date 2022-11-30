@@ -6,7 +6,7 @@
 
 Jest mocks for curried and chained functions
 
-- Create mock or spy for curried function with any number of parameters
+- Create mock for curried function with any number of parameters
 - Create mock for chained function of any depth
 - Easy to use expectation
 
@@ -21,7 +21,7 @@ $ npm install jest-nest
 Create a `setup` file:
 
 ```typescript
-import 'jest-nest';
+import { init } from 'jest-nest';
 ```
 
 And load it in your jest config:

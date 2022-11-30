@@ -9,7 +9,7 @@ export const init = () => {
     toBeNestedCalledWith: toHaveBeenNestedCalledWith,
   });
 
-  globalThis.nest = {
+  global.nest = {
     fn: fnNested,
     curry: fnCurried,
     args: nestingArgs,
