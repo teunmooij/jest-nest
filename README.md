@@ -138,6 +138,10 @@ declare global {
 
 ## Version history
 
+### v2.1
+
+- Improved installation experience
+
 ### v2.0
 
 - Curried jest mock
