@@ -1,1 +1,3 @@
-import '../src';
+import { init } from '../src';
+
+init();

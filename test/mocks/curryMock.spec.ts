@@ -57,4 +57,13 @@ describe('curryMock tests', () => {
     expect(f.uncurried).toHaveBeenNthCalledWith(2, 'e', 'f', 'g', 'h');
     expect(f.uncurried).toHaveBeenNthCalledWith(3, 'i', 'j', 'k', 'l');
   });
+
+  it('overrides the arity', () => {
+    const x = nest.curry((a, b, c, d) => 'done', 5);
+    const y = x('a')('b');
+    const z = y('c')('d');
+
+    expect(typeof z).toBe('function');
+    expect(z('a')).toBe('done');
+  });
 });

@@ -1,7 +1,6 @@
-import { expect } from '@jest/globals';
 import { ExpectationResult, MatcherState, MatcherUtils } from 'expect';
-import { NestingArgs } from './args';
-import { NestingMock } from './mocks/nestingMock';
+import { NestingArgs } from '../helpers/args';
+import { NestingMock } from '../mocks/nestingMock';
 
 const isNestingMock = (value: unknown): value is NestingMock => Boolean(value) && 'callPath' in (value as any);
 const isNestingArgs = (value: unknown): value is NestingArgs => Boolean(value) && Array.isArray((value as any).args);
@@ -46,7 +45,7 @@ const printCall = (args: any[][]) => `fn(${args.map(call => call.join(', ')).joi
  * @param {NestingMock} actual The mock on which to verify the expectations
  * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
  */
-function toHaveBeenNestedCalledWith(
+export function toHaveBeenNestedCalledWith(
   this: MatcherState & MatcherUtils,
   actual: unknown,
   args: NestingArgs | any[][],
@@ -89,22 +88,4 @@ Actual:
   ${calls.map(m => printCall(m)).join('\n  ')}`,
     pass: false,
   };
-}
-
-expect.extend({
-  toHaveBeenNestedCalledWith,
-  toBeNestedCalledWith: toHaveBeenNestedCalledWith,
-});
-
-export {};
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      /**
-       * Performs expectation on the nested mock the have been called
-       * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
-       */
-      toHaveBeenNestedCalledWith(nestedArgs: NestingArgs | any[][]): R;
-    }
-  }
 }

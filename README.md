@@ -6,7 +6,7 @@
 
 Jest mocks for curried and chained functions
 
-- Create mock or spy for curried function with any number of parameters
+- Create mock for curried function with any number of parameters
 - Create mock for chained function of any depth
 - Easy to use expectation
 
@@ -21,7 +21,7 @@ $ npm install jest-nest
 Create a `setup` file:
 
 ```typescript
-import 'jest-nest';
+import { init } from 'jest-nest';
 ```
 
 And load it in your jest config:
@@ -44,8 +44,8 @@ export default config;
 
 ```typescript
 it('expects curried function call', () => {
-  const mockImplementationOrSpyFunction = (a, b, c, d) => 'my return value';
-  const curryFn = nest.curry(mockImplementationOrSpyFunction);
+  const mockImplementation = (a, b, c, d) => 'my return value';
+  const curryFn = nest.curry(mockImplementation);
 
   const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
 
@@ -62,12 +62,30 @@ or without an implementation
 
 ```typescript
 it('expects curried function call', () => {
-  const numberOfArguments = 4;
-  const curryFn = nest.curry(numberOfArguments);
+  const arity = 4;
+  const curryFn = nest.curry(arity);
 
   const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
 
   expect(curryFn.uncurried).toHaveBeenCalledWith('a', 'b', { foo: expect.any(String) }, 'c');
+});
+```
+
+or with a curried function as implementation
+
+```typescript
+it('expects curried function call', () => {
+  import myCurriedFunc from './myFunc';
+
+  // Because the function is curried, the arity cannot be derived automatically
+  const curryFn = nest.curry(myCurriedFunc, 4);
+
+  const result = nestedFn('a', 'b')({ foo: 'bar' })('c');
+
+  // Expectations can be made on full chains
+  expect(curryFn.uncurried).toHaveBeenCalledWith('a', 'b', { foo: expect.any(String) }, 'c');
+  // or make expectations on how the mock was (partially) called
+  expect(curryFn).toHaveBeenNestedCalledWith(nest.args('a', 'b'));
 });
 ```
 
@@ -137,6 +155,11 @@ declare global {
 ```
 
 ## Version history
+
+### v2.1
+
+- Option to override arity of nest.mock (needed for curried implementations)
+- Improved installation experience
 
 ### v2.0
 
