@@ -22,6 +22,8 @@ Create a `setup` file:
 
 ```typescript
 import { init } from 'jest-nest';
+
+init();
 ```
 
 And load it in your jest config:
@@ -120,8 +122,8 @@ export type CurryMock = NestingMock & {
   uncurried: jest.Mock;
 };
 
-export declare function fnCurried(mockImplementation: (...args: any[]) => any): CurryMock;
-export declare function fnCurried(argumentLength: number): CurryMock;
+export declare function fnCurried(mockImplementation: (...args: any[]) => any, arity?: number): CurryMock;
+export declare function fnCurried(arity: number): CurryMock;
 
 export declare function fnNested(depth?: number, tailImplementation?: (...args: any[]) => any): NestingMock;
 ```
@@ -148,6 +150,7 @@ export declare function nestingArgs(...args: any[]): NestingArgs;
 declare global {
   var nest: {
     fn: typeof fnNested;
+    chain: fnNested;
     curry: typeof fnCurried;
     args: typeof nestingArgs;
   };
