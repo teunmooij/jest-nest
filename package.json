@@ -1,6 +1,6 @@
 {
   "name": "jest-nest",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "jest mock for curried and chained functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,7 +12,7 @@
     "test:coverage": "jest -c jest.config.ts --verbose --collectCoverage",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {
+  "peerDependencies": {
     "@types/jest": "^29.2.3",
     "jest": "^29.3.1"
   },
