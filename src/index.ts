@@ -1,9 +1,10 @@
 export {};
 import { fnNested, NestingMock } from './mocks/nestingMock';
 import { fnCurried, CurryMock } from './mocks/curryMock';
+import { objNested, ObjectMock } from './mocks/objectMock';
 import { nestingArgs, NestingArgs } from './helpers/args';
 
-export { fnNested, NestingMock, fnCurried, CurryMock, nestingArgs, NestingArgs };
+export { fnNested, NestingMock, fnCurried, CurryMock, nestingArgs, NestingArgs, objNested, ObjectMock };
 
 export { toHaveBeenNestedCalledWith } from './matchers/toHaveBeenNestedCalledWith';
 export { init } from './init';
@@ -29,6 +30,7 @@ declare global {
     fn: typeof fnNested;
     chain: typeof fnNested;
     curry: typeof fnCurried;
+    obj: typeof objNested;
     args: typeof nestingArgs;
   };
 }
