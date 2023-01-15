@@ -1,10 +1,10 @@
 export {};
 import { fnNested, NestingMock } from './mocks/nestingMock';
 import { fnCurried, CurryMock } from './mocks/curryMock';
-import { objNested, ObjectMock } from './mocks/objectMock';
+import { objNested, ObjectMock, CallState } from './mocks/objectMock';
 import { nestingArgs, NestingArgs } from './helpers/args';
 
-export { fnNested, NestingMock, fnCurried, CurryMock, nestingArgs, NestingArgs, objNested, ObjectMock };
+export { fnNested, NestingMock, fnCurried, CurryMock, nestingArgs, NestingArgs, objNested, ObjectMock, CallState };
 
 export { toHaveBeenNestedCalledWith } from './matchers/toHaveBeenNestedCalledWith';
 export { init } from './init';

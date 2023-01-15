@@ -61,5 +61,6 @@ describe('nestingMock tests', () => {
     f('a')('b');
 
     expect(tail).toHaveBeenCalledTimes(1);
+    expect(tail).toHaveBeenCalledWith('b');
   });
 });
