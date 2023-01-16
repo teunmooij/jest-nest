@@ -1,20 +1,13 @@
 import { NestingMock } from './nestingMock';
+import type { Path, Key, MockRegistration, CallState } from '../helpers/types';
 
-type Key = string | number | symbol;
-type Path = ReadonlyArray<Key>;
-type MockRegistration<P extends Path = Path, V = any> = { path: P; value: V };
-
-export type ObjectMock = NestingMock & {
+export type ObjectMock<Shape extends Record<string, unknown> = any, Strict extends boolean = false> = NestingMock & {
   mockImplementationAt<P extends Path, F extends (...args: any[]) => any>(path: P, fn: F): ObjectMock;
   mockReturnValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
   mockResolvedValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
   mockRejectedValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
   mockGetValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
 } & { [k: Key]: jest.Mock<ObjectMock> };
-
-export interface CallState {
-  callPath: any[][];
-}
 
 interface ObjectMockState extends CallState {
   context: jest.Mock;
@@ -25,7 +18,7 @@ interface ObjectMockState extends CallState {
 const shouldRelayToContext = (name: Key): name is keyof jest.Mock =>
   typeof name === 'string' && ['mock', '_isMockFunction', 'mockName', 'getMockName'].includes(name);
 
-const objNestedInternal = ({
+const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends boolean>({
   callPath = [],
   registrations = [],
 }: { callPath?: any[][]; registrations?: MockRegistration[] } = {}) => {
@@ -108,11 +101,12 @@ const objNestedInternal = ({
         return target.context(...objectArgs);
       });
     },
-  }) as unknown as ObjectMock;
+  }) as unknown as ObjectMock<Shape, Strict>;
 
   state.self = proxy;
 
   return proxy;
 };
 
-export const objNested = () => objNestedInternal();
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const objNested = () => objNestedInternal<{}, false>();
