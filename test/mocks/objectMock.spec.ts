@@ -68,6 +68,17 @@ describe('object mock tests', () => {
     expect(same).toBe(mock);
   });
 
+  it('can perform nested expectations if the given return value is a nest mock', () => {
+    const value = nest.curry(() => nest.obj(), 4);
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(path, value);
+
+    mock.foo('a').bar('b')('c')('d', 'e')('f').baz('g');
+
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(mock).toHaveBeenNestedCalledWith([['foo', 'a'], ['bar', 'b'], ['c'], ['d', 'e'], ['f'], ['baz', 'g']]);
+  });
+
   it('resolves a given value at a given path', async () => {
     const value = 42;
     const path = ['foo', 'bar'] as const;
@@ -155,5 +166,35 @@ describe('object mock tests', () => {
     expect(implementation).toHaveBeenCalledTimes(1);
     expect(implementation).toHaveBeenCalledWith('d');
     expect(same).toBe(mock);
+  });
+
+  it('allows multiple registrations at different paths', () => {
+    const mock = nest
+      .obj()
+      .mockReturnValueAt(['foo', 'bar'], 5)
+      .mockReturnValueAt(['foo', 'baz'], 3)
+      .mockImplementationAt(['bar', 'isEven'], function (this: CallState) {
+        return this.callPath[0][1] % 2 === 0 ? true : false;
+      });
+
+    const foo = mock.foo('a');
+
+    expect(foo.baz('b')).toBe(3);
+    expect(mock.bar(3).isEven()).toBe(false);
+    expect(mock.bar(2).isEven()).toBe(true);
+    expect(foo.bar('c')).toBe(5);
+
+    expect(mock).toHaveBeenCalledTimes(3);
+
+    expect(mock).toHaveBeenNestedCalledWith([
+      ['foo', 'a'],
+      ['bar', 'c'],
+    ]);
+    expect(mock).toHaveBeenNestedCalledWith([
+      ['foo', 'a'],
+      ['baz', 'b'],
+    ]);
+    expect(mock).toHaveBeenNestedCalledWith([['bar', 2], ['isEven']]);
+    expect(mock).toHaveBeenNestedCalledWith([['bar', 3], ['isEven']]);
   });
 });
