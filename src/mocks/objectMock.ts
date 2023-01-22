@@ -1,13 +1,27 @@
 import { NestingMock } from './nestingMock';
-import type { Path, Key, MockRegistration, CallState } from '../helpers/types';
+import type { Path, Key, MockRegistration, CallState, WithPath } from '../helpers/types';
 
-export type ObjectMock<Shape extends Record<string, unknown> = any, Strict extends boolean = false> = NestingMock & {
-  mockImplementationAt<P extends Path, F extends (...args: any[]) => any>(path: P, fn: F): ObjectMock;
-  mockReturnValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
-  mockResolvedValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
-  mockRejectedValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
-  mockGetValueAt<P extends Path, V>(path: P, value: V): ObjectMock;
-} & { [k: Key]: jest.Mock<ObjectMock> };
+type UnknownProp<Strict extends boolean> = Strict extends true ? never : jest.Mock<ObjectMock<any, Strict>>;
+
+export type ObjectMock<Shape = any, Strict extends boolean = false> = NestingMock & {
+  mockImplementationAt<P extends Path, F extends (...args: any[]) => any>(
+    path: P,
+    fn: F,
+  ): ObjectMock<WithPath<Shape, P, F>, Strict>;
+  mockReturnValueAt<P extends Path, V, I extends (...args: any[]) => V = (...args: any[]) => V>(
+    path: P,
+    value: V,
+  ): ObjectMock<WithPath<Shape, P, I>, Strict>;
+  mockResolvedValueAt<P extends Path, V, I extends (...args: any[]) => Promise<V> = (...args: any[]) => Promise<V>>(
+    path: P,
+    value: V,
+  ): ObjectMock<WithPath<Shape, P, I>, Strict>;
+  mockRejectedValueAt<P extends Path, V, I extends (...args: any[]) => Promise<V> = (...args: any[]) => Promise<V>>(
+    path: P,
+    value: V,
+  ): ObjectMock<WithPath<Shape, P, I>, Strict>;
+  mockGetValueAt<P extends Path, V>(path: P, value: V): ObjectMock<WithPath<Shape, P, V>, Strict>;
+} & { [K in Key]: K extends keyof Shape ? jest.Mock<ObjectMock<Shape[K], Strict>> : UnknownProp<Strict> };
 
 interface ObjectMockState extends CallState {
   context: jest.Mock;

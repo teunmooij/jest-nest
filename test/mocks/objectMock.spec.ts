@@ -57,7 +57,7 @@ describe('object mock tests', () => {
     const mock = nest.obj();
     const same = mock.mockReturnValueAt(path, value);
 
-    const result = mock.foo('a').bar('b');
+    const result = same.foo('a').bar('b');
 
     expect(result).toBe(42);
     expect(mock).toHaveBeenCalledTimes(1);
@@ -85,7 +85,7 @@ describe('object mock tests', () => {
     const mock = nest.obj();
     const same = mock.mockResolvedValueAt(path, value);
 
-    const result = mock.foo('a').bar('b');
+    const result = same.foo('a').bar('b');
 
     expect(result).toBeInstanceOf(Promise);
     expect(await result).toBe(42);
@@ -99,7 +99,7 @@ describe('object mock tests', () => {
     const mock = nest.obj();
     const same = mock.mockRejectedValueAt(path, value);
 
-    const result = mock.foo('a').bar('b');
+    const result = same.foo('a').bar('b');
 
     expect(result).toBeInstanceOf(Promise);
     await expect(result).rejects.toMatch('oops');
@@ -113,7 +113,7 @@ describe('object mock tests', () => {
     const mock = nest.obj();
     const same = mock.mockGetValueAt(path, value);
 
-    const result = mock.foo('a').bar;
+    const result = same.foo('a').bar;
 
     expect(result).toBe('baz');
 
@@ -126,7 +126,7 @@ describe('object mock tests', () => {
     const mock = nest.obj();
     const same = mock.mockImplementationAt(path, implementation);
 
-    const result = mock.foo('a').bar('b');
+    const result = same.foo('a').bar('b');
 
     expect(result).toBe(42);
     expect(mock).toHaveBeenCalledTimes(1);

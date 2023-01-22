@@ -27,15 +27,15 @@ describe('type tests', () => {
     expectTypes<ActualWithGarply, ExpectedWithGarply>().toBeIdentical;
   });
 
-  it('does not allow nested subpaths under non-existing keys', () => {
+  it('allows nested subpaths under non-existing keys', () => {
     type Shape = { foo: { bar: string; baz: { fred: number } } };
 
     type ExpectedWithGarply = {
       foo: { bar: string; baz: { fred: number } };
-      grault: never;
+      qux: (...args: any[]) => { grault: (...args: any[]) => { graply: number[] } };
     };
 
-    type ActualWithGarply = WithPath<Shape, ['grault', 'graply'], number[]>;
+    type ActualWithGarply = WithPath<Shape, ['qux', 'grault', 'graply'], number[]>;
 
     expectTypes<ActualWithGarply, ExpectedWithGarply>().toBeIdentical;
   });

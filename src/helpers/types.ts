@@ -18,7 +18,8 @@ export type WithPath<Shape, P extends Path, V> = Shape & {
           ? Promise<WithPath<P, Rest<R>, V>>
           : WithPath<ReturnType<Shape[x]>, Rest<P>, V>
       : WithPath<Shape[x], Rest<P>, V>
-    : never;
+    : // eslint-disable-next-line @typescript-eslint/ban-types
+      (...args: any[]) => WithPath<{}, Rest<P>, V>;
 };
 
 export interface CallState {

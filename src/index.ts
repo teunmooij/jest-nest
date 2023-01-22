@@ -1,8 +1,9 @@
 export {};
 import { fnNested, NestingMock } from './mocks/nestingMock';
 import { fnCurried, CurryMock } from './mocks/curryMock';
-import { objNested, ObjectMock, CallState } from './mocks/objectMock';
+import { objNested, ObjectMock } from './mocks/objectMock';
 import { nestingArgs, NestingArgs } from './helpers/args';
+import { CallState } from './helpers/types';
 
 export { fnNested, NestingMock, fnCurried, CurryMock, nestingArgs, NestingArgs, objNested, ObjectMock, CallState };
 
