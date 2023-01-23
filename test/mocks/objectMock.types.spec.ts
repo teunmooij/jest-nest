@@ -1,4 +1,4 @@
-import { WithPath } from '../../src/helpers/types';
+import { ObjectMock, WithPath } from '../../src/mocks/objectMock.types';
 import { expectTypes } from '../utils';
 
 describe('type tests', () => {
@@ -15,10 +15,10 @@ describe('type tests', () => {
     };
 
     // Act
-    type ActualWithQux = WithPath<Shape, ['qux'], string>;
-    type ActualWithQuux = WithPath<ActualWithQux, ['foo', 'baz', 'quux'], string>;
-    type ActualWithCorge = WithPath<ActualWithQuux, ['foo', 'corge'], boolean>;
-    type ActualWithGarply = WithPath<Shape, ['grault'], { graply: number[] }>;
+    type ActualWithQux = WithPath<Shape, true, ['qux'], string>;
+    type ActualWithQuux = WithPath<ActualWithQux, true, ['foo', 'baz', 'quux'], string>;
+    type ActualWithCorge = WithPath<ActualWithQuux, true, ['foo', 'corge'], boolean>;
+    type ActualWithGarply = WithPath<Shape, true, ['grault'], { graply: number[] }>;
 
     // Assert
     expectTypes<ActualWithQux, ExpectedWithQux>().toBeIdentical;
@@ -32,10 +32,10 @@ describe('type tests', () => {
 
     type ExpectedWithGarply = {
       foo: { bar: string; baz: { fred: number } };
-      qux: (...args: any[]) => { grault: (...args: any[]) => { graply: number[] } };
+      qux: jest.Mock<ObjectMock<{ grault: jest.Mock<ObjectMock<{ graply: number[] }, true>> }, true>>;
     };
 
-    type ActualWithGarply = WithPath<Shape, ['qux', 'grault', 'graply'], number[]>;
+    type ActualWithGarply = WithPath<Shape, true, ['qux', 'grault', 'graply'], number[]>;
 
     expectTypes<ActualWithGarply, ExpectedWithGarply>().toBeIdentical;
   });
@@ -65,10 +65,10 @@ describe('type tests', () => {
     };
 
     // Act
-    type ActualWithQux = WithPath<Shape, ['qux'], string>;
-    type ActualWithQuux = WithPath<ActualWithQux, ['foo', 'baz', 'quux'], string>;
-    type ActualWithCorge = WithPath<ActualWithQuux, ['foo', 'corge'], (arg: string) => boolean>;
-    type ActualWithGarply = WithPath<Shape, ['grault'], { graply: number[] }>;
+    type ActualWithQux = WithPath<Shape, true, ['qux'], string>;
+    type ActualWithQuux = WithPath<ActualWithQux, true, ['foo', 'baz', 'quux'], string>;
+    type ActualWithCorge = WithPath<ActualWithQuux, true, ['foo', 'corge'], (arg: string) => boolean>;
+    type ActualWithGarply = WithPath<Shape, true, ['grault'], { graply: number[] }>;
 
     // Assert
     expectTypes<ActualWithQux, ExpectedWithQux>().toBeIdentical;
