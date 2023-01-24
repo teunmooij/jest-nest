@@ -37,12 +37,34 @@ type SetStrictMode<Shape, Strict extends boolean> = {
 };
 
 export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
+  /**
+   * Sets a mock implementation at a given path
+   * @param {...Path} props property path
+   * @param {(this: CallState, ...args: any[]) => any} implementation mock implementation at the given path
+   * @example mock.mockImplementationAt('foo', 'bar', () => 42);
+   * @example mock.mockImplementationAt('foo', 'bar', function(this CallState) {
+   *   // inspect the call path
+   *   const [fooArgs, barArgs] = this.callPath
+   * });
+   */
   mockImplementationAt<Props extends Path, Implementation extends (this: CallState, ...args: any[]) => any>(
     ...args: [...Props, Implementation]
   ): ObjectMock<WithPath<Shape, Strict, Props, Implementation>, Strict>;
+  /**
+   * Sets a return value at a given path
+   * @param {...Path} props property path
+   * @param {any} value return value at the given path
+   * @example mock.mockReturnValueAt('foo', 'bar', 42)
+   */
   mockReturnValueAt<Props extends Path, Value extends {}, I extends (...args: any[]) => Value = (...args: any[]) => Value>(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  /**
+   * Sets a resolved promise value at a given path
+   * @param {...Path} props property path
+   * @param {any} value resolved promise value at the given path
+   * @example mock.mockResolvedValueAt('foo', 'bar', 42)
+   */
   mockResolvedValueAt<
     Props extends Path,
     Value extends {},
@@ -50,6 +72,12 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
   >(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  /**
+   * Sets a rejected promise value at a given path
+   * @param {...Path} props property path
+   * @param {any} value rejected promise value at the given path
+   * @example mock.mockRejectedValueAt('foo', 'bar', 42)
+   */
   mockRejectedValueAt<
     Props extends Path,
     Value extends {},
@@ -57,10 +85,22 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
   >(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  /**
+   * Sets a property value at a given path
+   * @param {...Path} props property path
+   * @param {any} value property value at the given path
+   * @example mock.mockReturnValueAt('foo', 'bar', 42)
+   */
   mockGetValueAt<Props extends Path, Value>(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, Value>, Strict>;
+  /**
+   * Sets the mode of the object mock to strict. In strict mode, any properties that have not been explicitely set return a value of 'undefined'
+   */
   mockStrict(): ObjectMock<SetStrictMode<Shape, true>, true>;
+  /**
+   * Sets the mode of the object mock to implicit. In implicit mode, any properties that have not been explicitely set return a function that returns an 'ObjectMock'
+   */
   mockImplicit(): ObjectMock<SetStrictMode<Shape, false>, false>;
 } & Shape &
   Record<Key, UnknownProp<Strict>>;
