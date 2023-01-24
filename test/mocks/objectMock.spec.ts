@@ -197,4 +197,32 @@ describe('object mock tests', () => {
     expect(mock).toHaveBeenNestedCalledWith([['bar', 2], ['isEven']]);
     expect(mock).toHaveBeenNestedCalledWith([['bar', 3], ['isEven']]);
   });
+
+  it('nests registered paths in strict mode', () => {
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(path, 5).mockStrict();
+
+    expect(mock.foo('a').bar('b')).toBe(5);
+  });
+
+  it('returns undefined on a unregistered path in strict mode', () => {
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(path, 5).mockStrict();
+
+    expect(mock.foo('a').baz).toBeUndefined();
+  });
+
+  it('nests registered paths in implicit mode', () => {
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(path, 5).mockImplicit();
+
+    expect(mock.foo('a').bar('b')).toBe(5);
+  });
+
+  it('returns undefined on a unregistered path in strict mode', () => {
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(path, 5).mockImplicit();
+
+    expect(typeof mock.foo('a').baz).toBe('function');
+  });
 });

@@ -6,12 +6,18 @@ const shouldRelayToContext = (name: Key): name is keyof jest.Mock =>
 const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends boolean>({
   callPath = [],
   registrations = [],
-}: { callPath?: any[][]; registrations?: MockRegistration[] } = {}) => {
+  strict,
+}: {
+  callPath?: any[][];
+  registrations?: MockRegistration[];
+  strict: Strict;
+}) => {
   const state = {
     context: jest.fn(),
     registrations,
     callPath,
-  } as ObjectMockState<Shape, Strict>;
+    strict,
+  } as ObjectMockState;
 
   const proxy = new Proxy(state, {
     get(target, name): any {
@@ -43,6 +49,16 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
         case 'mockGetValueAt':
           return <P extends Path, V>(path: P, value: V) => {
             target.registrations.push({ path, value });
+            return target.self;
+          };
+        case 'mockStrict':
+          return () => {
+            target.strict = true;
+            return target.self;
+          };
+        case 'mockImplicit':
+          return () => {
+            target.strict = false;
             return target.self;
           };
         case 'toJSON':
@@ -78,10 +94,16 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
         .filter(registration => registration.path[0] === name)
         .map(({ path: [, ...tail], value }) => ({ path: tail, value }));
 
+      if (target.strict && !tailRegistrations.length) return undefined;
+
       return jest.fn((...args) => {
         const objectArgs = [name, ...args];
         target.context.mockReturnValueOnce(
-          objNestedInternal({ callPath: [...target.callPath, objectArgs], registrations: tailRegistrations }),
+          objNestedInternal({
+            callPath: [...target.callPath, objectArgs],
+            registrations: tailRegistrations,
+            strict: target.strict,
+          }),
         );
         return target.context(...objectArgs);
       });
@@ -94,4 +116,4 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
 };
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-export const objNested = () => objNestedInternal<{}, false>();
+export const objNested = () => objNestedInternal<{}, false>({ strict: false });

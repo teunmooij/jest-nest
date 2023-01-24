@@ -29,7 +29,14 @@ export type WithPath<Shape, Strict extends boolean, P extends Path, V> = Shape &
       jest.Mock<ObjectMock<WithPath<{}, Strict, Rest<P>, V>, Strict>>;
 };
 
-type UnknownProp<Strict extends boolean> = Strict extends true ? never : jest.Mock<ObjectMock<any, Strict>>;
+// eslint-disable-next-line @typescript-eslint/ban-types
+type UnknownProp<Strict extends boolean> = Strict extends true ? never : jest.Mock<ObjectMock<{}, Strict>>;
+
+type SetStrictMode<Shape, Strict extends boolean> = {
+  [K in keyof Shape]: Shape[K] extends jest.Mock<ObjectMock<infer KShape, any>>
+    ? jest.Mock<ObjectMock<SetStrictMode<KShape, Strict>, Strict>>
+    : Shape[K];
+};
 
 export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
   mockImplementationAt<P extends Path, F extends (...args: any[]) => any>(
@@ -49,14 +56,18 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
     value: V,
   ): ObjectMock<WithPath<Shape, Strict, P, I>, Strict>;
   mockGetValueAt<P extends Path, V>(path: P, value: V): ObjectMock<WithPath<Shape, Strict, P, V>, Strict>;
-} & { [K in Key]: K extends keyof Shape ? Shape[K] : UnknownProp<Strict> };
+  mockStrict(): ObjectMock<SetStrictMode<Shape, true>, true>;
+  mockImplicit(): ObjectMock<SetStrictMode<Shape, false>, false>;
+} & Shape &
+  Record<Key, UnknownProp<Strict>>;
 
 export interface CallState {
   callPath: any[][];
 }
 
-export interface ObjectMockState<Shape, Strict extends boolean> extends CallState {
+export interface ObjectMockState extends CallState {
   context: jest.Mock;
   registrations: MockRegistration[];
-  self: ObjectMock<Shape, Strict>;
+  self: ObjectMock<any, boolean>;
+  strict: boolean;
 }
