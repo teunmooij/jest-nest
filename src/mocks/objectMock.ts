@@ -1,15 +1,31 @@
-import type { Path, Key, MockRegistration, ObjectMockState, ObjectMock } from './objectMock.types';
+import type { Key, ObjectMockState, ObjectMock } from './objectMock.types';
 
 const shouldRelayToContext = (name: Key): name is keyof jest.Mock =>
   typeof name === 'string' && ['mock', '_isMockFunction', 'mockName', 'getMockName'].includes(name);
+
+const addRegistration =
+  (target: ObjectMockState, valueFactory: (value: any) => any) =>
+  (...args: any[]) => {
+    const path = args.slice(0, -1);
+    const value = valueFactory(args[args.length - 1]);
+
+    target.registrations.push({ path, value });
+
+    return target.self;
+  };
+
+const setStrictness = (target: ObjectMockState, strictness: boolean) => () => {
+  target.strict = strictness;
+  return target.self;
+};
 
 const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends boolean>({
   callPath = [],
   registrations = [],
   strict,
 }: {
-  callPath?: any[][];
-  registrations?: MockRegistration[];
+  callPath?: ObjectMockState['callPath'];
+  registrations?: ObjectMockState['registrations'];
   strict: Strict;
 }) => {
   const state = {
@@ -27,40 +43,19 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
         case 'callPath':
           return target.callPath;
         case 'mockImplementationAt':
-          return <P extends Path, F extends (...args: any[]) => any>(path: P, value: F) => {
-            target.registrations.push({ path, value });
-            return target.self;
-          };
+          return addRegistration(target, func => func);
         case 'mockReturnValueAt':
-          return <P extends Path, V>(path: P, value: V) => {
-            target.registrations.push({ path, value: () => value });
-            return target.self;
-          };
+          return addRegistration(target, value => () => value);
         case 'mockResolvedValueAt':
-          return <P extends Path, V>(path: P, value: V) => {
-            target.registrations.push({ path, value: () => Promise.resolve(value) });
-            return target.self;
-          };
+          return addRegistration(target, value => () => Promise.resolve(value));
         case 'mockRejectedValueAt':
-          return <P extends Path, V>(path: P, value: V) => {
-            target.registrations.push({ path, value: () => Promise.reject(value) });
-            return target.self;
-          };
+          return addRegistration(target, value => () => Promise.reject(value));
         case 'mockGetValueAt':
-          return <P extends Path, V>(path: P, value: V) => {
-            target.registrations.push({ path, value });
-            return target.self;
-          };
+          return addRegistration(target, value => value);
         case 'mockStrict':
-          return () => {
-            target.strict = true;
-            return target.self;
-          };
+          return setStrictness(target, true);
         case 'mockImplicit':
-          return () => {
-            target.strict = false;
-            return target.self;
-          };
+          return setStrictness(target, false);
         case 'toJSON':
           return () => '[ObjectMock]'; // TODO: provide better value like 'ObjectMock as path mock.foo('bar').baz
         case 'toString':

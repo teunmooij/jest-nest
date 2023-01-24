@@ -55,7 +55,7 @@ describe('object mock tests', () => {
     const value = 42;
     const path = ['foo', 'bar'] as const;
     const mock = nest.obj();
-    const same = mock.mockReturnValueAt(path, value);
+    const same = mock.mockReturnValueAt(...path, value);
 
     const result = same.foo('a').bar('b');
 
@@ -71,7 +71,7 @@ describe('object mock tests', () => {
   it('can perform nested expectations if the given return value is a nest mock', () => {
     const value = nest.curry(() => nest.obj(), 4);
     const path = ['foo', 'bar'] as const;
-    const mock = nest.obj().mockReturnValueAt(path, value);
+    const mock = nest.obj().mockReturnValueAt(...path, value);
 
     mock.foo('a').bar('b')('c')('d', 'e')('f').baz('g');
 
@@ -83,7 +83,7 @@ describe('object mock tests', () => {
     const value = 42;
     const path = ['foo', 'bar'] as const;
     const mock = nest.obj();
-    const same = mock.mockResolvedValueAt(path, value);
+    const same = mock.mockResolvedValueAt(...path, value);
 
     const result = same.foo('a').bar('b');
 
@@ -97,7 +97,7 @@ describe('object mock tests', () => {
     const value = 'oops';
     const path = ['foo', 'bar'] as const;
     const mock = nest.obj();
-    const same = mock.mockRejectedValueAt(path, value);
+    const same = mock.mockRejectedValueAt(...path, value);
 
     const result = same.foo('a').bar('b');
 
@@ -111,7 +111,7 @@ describe('object mock tests', () => {
     const value = 'baz';
     const path = ['foo', 'bar'] as const;
     const mock = nest.obj();
-    const same = mock.mockGetValueAt(path, value);
+    const same = mock.mockGetValueAt(...path, value);
 
     const result = same.foo('a').bar;
 
@@ -124,7 +124,7 @@ describe('object mock tests', () => {
     const implementation = jest.fn().mockReturnValue(42);
     const path = ['foo', 'bar'] as const;
     const mock = nest.obj();
-    const same = mock.mockImplementationAt(path, implementation);
+    const same = mock.mockImplementationAt(...path, implementation);
 
     const result = same.foo('a').bar('b');
 
@@ -151,7 +151,7 @@ describe('object mock tests', () => {
     });
     const path = ['foo', 'bar', 'baz'] as const;
     const mock = nest.obj();
-    const same = mock.mockImplementationAt(path, implementation);
+    const same = mock.mockImplementationAt(...path, implementation);
 
     const result = mock.foo('a').bar('b', 'c').baz('d');
 
@@ -171,9 +171,9 @@ describe('object mock tests', () => {
   it('allows multiple registrations at different paths', () => {
     const mock = nest
       .obj()
-      .mockReturnValueAt(['foo', 'bar'], 5)
-      .mockReturnValueAt(['foo', 'baz'], 3)
-      .mockImplementationAt(['bar', 'isEven'], function (this: CallState) {
+      .mockReturnValueAt('foo', 'bar', 5)
+      .mockReturnValueAt('foo', 'baz', 3)
+      .mockImplementationAt('bar', 'isEven', function (this: CallState) {
         return this.callPath[0][1] % 2 === 0 ? true : false;
       });
 
@@ -199,29 +199,25 @@ describe('object mock tests', () => {
   });
 
   it('nests registered paths in strict mode', () => {
-    const path = ['foo', 'bar'] as const;
-    const mock = nest.obj().mockReturnValueAt(path, 5).mockStrict();
+    const mock = nest.obj().mockReturnValueAt('foo', 'bar', 5).mockStrict();
 
     expect(mock.foo('a').bar('b')).toBe(5);
   });
 
   it('returns undefined on a unregistered path in strict mode', () => {
-    const path = ['foo', 'bar'] as const;
-    const mock = nest.obj().mockReturnValueAt(path, 5).mockStrict();
+    const mock = nest.obj().mockReturnValueAt('foo', 'bar', 5).mockStrict();
 
     expect(mock.foo('a').baz).toBeUndefined();
   });
 
   it('nests registered paths in implicit mode', () => {
-    const path = ['foo', 'bar'] as const;
-    const mock = nest.obj().mockReturnValueAt(path, 5).mockImplicit();
+    const mock = nest.obj().mockReturnValueAt('foo', 'bar', 5).mockImplicit();
 
     expect(mock.foo('a').bar('b')).toBe(5);
   });
 
   it('returns undefined on a unregistered path in strict mode', () => {
-    const path = ['foo', 'bar'] as const;
-    const mock = nest.obj().mockReturnValueAt(path, 5).mockImplicit();
+    const mock = nest.obj().mockReturnValueAt('foo', 'bar', 5).mockImplicit();
 
     expect(typeof mock.foo('a').baz).toBe('function');
   });

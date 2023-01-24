@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-types */
 import { NestingMock } from './nestingMock';
 
 export type Key = string | number | symbol;
@@ -9,7 +10,6 @@ type AsPath<T> = T extends Path ? T : never;
 type Root<P extends Path> = AsKey<P extends Readonly<[infer R, ...any[]]> ? R : never>;
 type Rest<P extends Path> = AsPath<P extends Readonly<[any, ...infer R]> ? R : never>;
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type NoFunc<T> = Pick<T, Exclude<keyof T, keyof Function>>;
 
 export type WithPath<Shape, Strict extends boolean, P extends Path, V> = Shape & {
@@ -25,11 +25,9 @@ export type WithPath<Shape, Strict extends boolean, P extends Path, V> = Shape &
           ? Promise<WithPath<PR, Strict, Rest<P>, V>>
           : WithPath<ReturnType<Shape[K]>, Strict, Rest<P>, V>
       : WithPath<Shape[K], Strict, Rest<P>, V>
-    : // eslint-disable-next-line @typescript-eslint/ban-types
-      jest.Mock<ObjectMock<WithPath<{}, Strict, Rest<P>, V>, Strict>>;
+    : jest.Mock<ObjectMock<WithPath<{}, Strict, Rest<P>, V>, Strict>>;
 };
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 type UnknownProp<Strict extends boolean> = Strict extends true ? never : jest.Mock<ObjectMock<{}, Strict>>;
 
 type SetStrictMode<Shape, Strict extends boolean> = {
@@ -39,30 +37,36 @@ type SetStrictMode<Shape, Strict extends boolean> = {
 };
 
 export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
-  mockImplementationAt<P extends Path, F extends (...args: any[]) => any>(
-    path: P,
-    fn: F,
-  ): ObjectMock<WithPath<Shape, Strict, P, F>, Strict>;
-  mockReturnValueAt<P extends Path, V, I extends (...args: any[]) => V = (...args: any[]) => V>(
-    path: P,
-    value: V,
-  ): ObjectMock<WithPath<Shape, Strict, P, I>, Strict>;
-  mockResolvedValueAt<P extends Path, V, I extends (...args: any[]) => Promise<V> = (...args: any[]) => Promise<V>>(
-    path: P,
-    value: V,
-  ): ObjectMock<WithPath<Shape, Strict, P, I>, Strict>;
-  mockRejectedValueAt<P extends Path, V, I extends (...args: any[]) => Promise<V> = (...args: any[]) => Promise<V>>(
-    path: P,
-    value: V,
-  ): ObjectMock<WithPath<Shape, Strict, P, I>, Strict>;
-  mockGetValueAt<P extends Path, V>(path: P, value: V): ObjectMock<WithPath<Shape, Strict, P, V>, Strict>;
+  mockImplementationAt<Props extends Path, Implementation extends (this: CallState, ...args: any[]) => any>(
+    ...args: [...Props, Implementation]
+  ): ObjectMock<WithPath<Shape, Strict, Props, Implementation>, Strict>;
+  mockReturnValueAt<Props extends Path, Value extends {}, I extends (...args: any[]) => Value = (...args: any[]) => Value>(
+    ...args: [...Props, Value]
+  ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  mockResolvedValueAt<
+    Props extends Path,
+    Value extends {},
+    I extends (...args: any[]) => Promise<Value> = (...args: any[]) => Promise<Value>,
+  >(
+    ...args: [...Props, Value]
+  ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  mockRejectedValueAt<
+    Props extends Path,
+    Value extends {},
+    I extends (...args: any[]) => Promise<Value> = (...args: any[]) => Promise<Value>,
+  >(
+    ...args: [...Props, Value]
+  ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
+  mockGetValueAt<Props extends Path, Value>(
+    ...args: [...Props, Value]
+  ): ObjectMock<WithPath<Shape, Strict, Props, Value>, Strict>;
   mockStrict(): ObjectMock<SetStrictMode<Shape, true>, true>;
   mockImplicit(): ObjectMock<SetStrictMode<Shape, false>, false>;
 } & Shape &
   Record<Key, UnknownProp<Strict>>;
 
 export interface CallState {
-  callPath: any[][];
+  readonly callPath: ReadonlyArray<ReadonlyArray<any>>;
 }
 
 export interface ObjectMockState extends CallState {
