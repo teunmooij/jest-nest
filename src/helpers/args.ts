@@ -1,7 +1,10 @@
 export type NestingArgs = {
   /**
+   * Helper for fluent creation of expected nested arguments. Call as a function or as a map of functions like you expect your mock to have been called.
    * @param {...any[]} args expected arguments at current level of depth
    * @returns {NestingArgs} Arguments up to the next level of depth
+   * @example nest.args.foo('bar').baz() // expect object mock to have been called on property foo with arguments 'bar', then nested on property baz
+   * @example nest.args('a')('b') // expect nesting or curry mock to have been called first with argument 'a' and then nested with argument 'b'
    */
   (...args: any[]): NestingArgs;
   /**
