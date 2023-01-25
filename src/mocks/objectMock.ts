@@ -110,5 +110,9 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
   return proxy;
 };
 
+/**
+ * Creates a jest mock for a nested objects
+ * @returns {ObjectMock} a new implicit object mock
+ */
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const objNested = () => objNestedInternal<{}, false>({ strict: false });

@@ -36,6 +36,9 @@ type SetStrictMode<Shape, Strict extends boolean> = {
     : Shape[K];
 };
 
+/**
+ * Mock for objects and their nested children
+ */
 export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
   /**
    * Sets a mock implementation at a given path
@@ -106,6 +109,10 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
   Record<Key, UnknownProp<Strict>>;
 
 export interface CallState {
+  /**
+   * List of consecutive call arguments to this nested mock
+   * @readonly
+   */
   readonly callPath: ReadonlyArray<ReadonlyArray<any>>;
 }
 

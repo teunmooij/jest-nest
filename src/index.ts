@@ -28,10 +28,25 @@ declare global {
 
   // eslint-disable-next-line no-var
   var nest: {
+    /**
+     * Creates a jest mock for a nested function
+     */
     fn: typeof fnNested;
+    /**
+     * Creates a jest mock for a nested function
+     */
     chain: typeof fnNested;
+    /**
+     * Creates a jest mock for a curried function
+     */
     curry: typeof fnCurried;
+    /**
+     * Creates a jest mock for a nested objects
+     */
     obj: typeof objNested;
+    /**
+     * Helper for fluent creation of expected nested arguments
+     */
     args: typeof nestingArgs;
   };
 }
