@@ -2,8 +2,9 @@ import { ExpectationResult, MatcherState, MatcherUtils } from 'expect';
 import { NestingArgs } from '../helpers/args';
 import { NestingMock } from '../mocks/nestingMock';
 
-const isNestingMock = (value: unknown): value is NestingMock => Boolean(value) && 'callPath' in (value as any);
-const isNestingArgs = (value: unknown): value is NestingArgs => Boolean(value) && Array.isArray((value as any).args);
+const isNestingMock = (value: any): value is NestingMock => ['object', 'function'].includes(typeof value) && 'callPath' in value;
+const isNestingArgs = (value: any): value is NestingArgs =>
+  ['object', 'function'].includes(typeof value) && Array.isArray(value.args);
 
 const getCalls = (actual: NestingMock, prev: any[][] = []): any[][][] => {
   const { calls, results } = actual.mock;

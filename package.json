@@ -1,11 +1,11 @@
 {
   "name": "jest-nest",
-  "version": "2.1.3",
+  "version": "2.2.0",
   "description": "jest mock for curried and chained functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist && tsc --sourceMap false",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --quiet --fix",
     "test": "jest -c jest.config.ts",
@@ -53,7 +53,8 @@
     "function",
     "mock",
     "chain",
-    "chained"
+    "chained",
+    "object mock"
   ],
   "author": "Teun Mooij",
   "license": "MIT",

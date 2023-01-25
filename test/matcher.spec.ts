@@ -89,4 +89,17 @@ Expected: fn(a)(b, c)
 Actual:
   fn(a, b)(c)`);
   });
+
+  it('also works on object mocks', () => {
+    const objectMock = nest.obj();
+    objectMock.foo('abc').bar('baz');
+
+    expect(objectMock).toHaveBeenNestedCalledWith(nest.args.foo('abc').bar('baz'));
+    expect(() => {
+      expect(objectMock).toHaveBeenNestedCalledWith(nest.args.foo('abc').bar('qux'));
+    }).toThrow(`Expected calls to match
+Expected: fn(foo, abc)(bar, qux)
+Actual:
+  fn(foo, abc)(bar, baz)`);
+  });
 });
