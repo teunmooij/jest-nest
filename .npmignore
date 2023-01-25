@@ -5,5 +5,5 @@ test/
 
 .eslintrc.js
 .prettierrc.js
-jest.config.test
+jest.config.ts
 tsconfig.json
