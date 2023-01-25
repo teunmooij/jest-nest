@@ -4,11 +4,34 @@
 
 # jest-nest
 
-Jest mocks for curried and chained functions
+Jest mocks for curried, chained functions and nested objects
 
 - Create mock for curried function with any number of parameters
 - Create mock for chained function of any depth
+- Create mock for objects that return (deeply) nested objects and specify return values at any path
 - Easy to use expectation
+
+With this you can write:
+
+```typescript
+const mock = nest.obj().mockReturnValueAt('foo', 'bar', nest.curry(3));
+
+expect(mock).toHaveBeenNestedCalledWith(nest.args.foo('a', 'b').bar('c')('d', 'e')('f'));
+```
+
+Instead of:
+
+```typescript
+const deeperNestedFunction = jest.fn();
+const nestedFunction = jest.fn().mockReturnValue(deeperNestedFunction);
+const nestedObject = { bar: jest.fn().mockReturnValue(nestedFunction) };
+const mock = { foo: jest.fn().mockReturnValue(nestedObject) };
+
+expect(mock).toHaveBeenCalledWith('a', 'b');
+expect(nestedObject).toHaveBeenCalledWith('c');
+expect(nestedFunction).toHaveBeenCalledWith('d', 'e');
+expect(deeperNestedFunction).toHaveBeenCalledWith('f');
+```
 
 ## Installation
 
@@ -109,23 +132,41 @@ it('expects nested function call', () => {
 });
 ```
 
+### (Nested) objects
+
+### Combined mocks
+
 ## Api reference
 
 ### Mocks
 
 ```typescript
-export type NestingMock = jest.Mock & {
-  callPath: any[][];
-};
+interface CallState {
+      readonly callPath: ReadonlyArray<ReadonlyArray<any>>;
+}
+
+export type NestingMock = jest.Mock & CallState;
 
 export type CurryMock = NestingMock & {
   uncurried: jest.Mock;
 };
 
+export type ObjectMock<Shape, Strict extends boolean> = NestingMock & {
+  mockImplementationAt: (...path: string[], implementation: (this: CallState, ...args: any[]) => any): ObjectMock<NewShape, Strict>;
+  mockReturnValueAt: (...path: string[], value: any) => any): ObjectMock<NewShape, Strict>;
+  mockResolvedValueAt: (...path: string[], value: any): ObjectMock<NewShape, Strict>;
+  mockRejectedValueAt: (...path: string[], value: any): ObjectMock<NewShape, Strict>;
+  mockGetValueAt: (...path: string[], value: any): ObjectMock<NewShape, Strict>;
+  mockStrict: (): ObjectMock<Shape, true>;
+  mockImplicit: (): ObjectMock<Shape, false>;
+} & Shape & Record<string | number | symbol, Strict extends true ? never : jest.Mock<ObjectMock<{}, Strict>>>
+
 export declare function fnCurried(mockImplementation: (...args: any[]) => any, arity?: number): CurryMock;
 export declare function fnCurried(arity: number): CurryMock;
 
 export declare function fnNested(depth?: number, tailImplementation?: (...args: any[]) => any): NestingMock;
+
+export declare function objNested(): ObjectMock<{}, false>;
 ```
 
 ### Expectations
@@ -140,8 +181,9 @@ namespace jest {
 export type NestingArgs = {
   (...args: any[]): NestingArgs;
   args: any[][];
-};
-export declare function nestingArgs(...args: any[]): NestingArgs;
+} & Record<string | number | symbol, (...args: any[]) => NestingArgs>;
+
+export declare const nestingArgs: NestingArgs;
 ```
 
 ### Global exports
@@ -152,12 +194,17 @@ declare global {
     fn: typeof fnNested;
     chain: fnNested;
     curry: typeof fnCurried;
+    obj: typeof objNested;
     args: typeof nestingArgs;
   };
 }
 ```
 
 ## Version history
+
+### v2.2
+
+- Object mocks
 
 ### v2.1
 
