@@ -255,4 +255,29 @@ describe('object mock tests', () => {
 
     expect(result).toBe('Hello John!');
   });
+
+  it('intercepts toJSON calls', () => {
+    const mock = nest.obj();
+    const json = mock.toJSON();
+
+    expect(json).toEqual('[ObjectMock]');
+  });
+
+  it('intercepts toString calls', () => {
+    const mock = nest.obj();
+    const stringValue = mock.toString();
+
+    expect(stringValue).toEqual('[ObjectMock]');
+  });
+
+  it('returns the callPath', () => {
+    const mock = nest.obj();
+
+    const nested = mock.foo('a').bar('b');
+
+    expect(nested.callPath).toEqual([
+      ['foo', 'a'],
+      ['bar', 'b'],
+    ]);
+  });
 });
