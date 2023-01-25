@@ -291,3 +291,7 @@ declare global {
 - Nested jest mock
 - Nesting args helper
 - `toHaveBeenNestedCalledWith` jest custom matcher
+
+## License
+
+MIT © [Teun Mooij](https://www.linkedin.com/in/teunmooij/)
