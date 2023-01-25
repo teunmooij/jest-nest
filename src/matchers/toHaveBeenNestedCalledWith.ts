@@ -1,4 +1,3 @@
-import { ExpectationResult, MatcherState, MatcherUtils } from 'expect';
 import { NestingArgs } from '../helpers/args';
 import { NestingMock } from '../mocks/nestingMock';
 
@@ -24,7 +23,7 @@ const getCalls = (actual: NestingMock, prev: any[][] = []): any[][][] => {
     });
 };
 
-const getMatch = (context: MatcherState & MatcherUtils, actual: any[][], expected: any[][]): any[][] => {
+const getMatch = (context: jest.MatcherContext, actual: any[][], expected: any[][]): any[][] => {
   const sharedLength = Math.min(actual.length, expected.length);
   let index = 0;
   while (index < sharedLength) {
@@ -36,7 +35,7 @@ const getMatch = (context: MatcherState & MatcherUtils, actual: any[][], expecte
   return actual.slice(0, index);
 };
 
-const getMatches = (context: MatcherState & MatcherUtils, actual: any[][][], expected: any[][]): any[][][] =>
+const getMatches = (context: jest.MatcherContext, actual: any[][][], expected: any[][]): any[][][] =>
   actual.map(call => getMatch(context, call, expected)).filter(match => match.length);
 
 const printCall = (args: any[][]) => `fn(${args.map(call => call.join(', ')).join(')(')})`;
@@ -47,10 +46,10 @@ const printCall = (args: any[][]) => `fn(${args.map(call => call.join(', ')).joi
  * @param {NestingArgs|any[][]} args Consecutive args expected to have been called on the mock
  */
 export function toHaveBeenNestedCalledWith(
-  this: MatcherState & MatcherUtils,
+  this: jest.MatcherContext,
   actual: unknown,
   args: NestingArgs | any[][],
-): ExpectationResult {
+): jest.CustomMatcherResult {
   if (!isNestingMock(actual)) {
     throw new Error('Actual must be a Nesting mock.');
   }
