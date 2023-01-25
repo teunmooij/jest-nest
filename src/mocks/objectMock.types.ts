@@ -104,6 +104,11 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
    */
   mockStrict(): ObjectMock<SetStrictMode<Shape, true>, true>;
   /**
+   * Sets the mode of the object mock to strict. In strict mode, any properties that have not been explicitely set return a value of 'undefined'
+   * @alias mockStrict
+   */
+  mockExplicit(): ObjectMock<SetStrictMode<Shape, true>, true>;
+  /**
    * Sets the mode of the object mock to implicit. In implicit mode, any properties that have not been explicitely set return a function that returns an 'ObjectMock'
    */
   mockImplicit(): ObjectMock<SetStrictMode<Shape, false>, false>;
@@ -113,7 +118,8 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
 export interface CallState {
   /**
    * List of consecutive call arguments to this nested mock
-   * @readonly
+   *
+   * If the call was on a property, the first argument in the call is the name of the property.
    */
   readonly callPath: ReadonlyArray<ReadonlyArray<any>>;
 }

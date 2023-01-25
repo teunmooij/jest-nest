@@ -236,4 +236,23 @@ describe('object mock tests', () => {
 
     expect(typeof mock.foo('a').baz).toBe('function');
   });
+
+  it('can be configured to meet a given interface', () => {
+    type Child = { bar: () => string };
+    type Parent = { foo: (name: string) => Child };
+    const greetChild = (parent: Parent, name: string) => {
+      const child = parent.foo(name);
+      return child.bar();
+    };
+
+    const mock = nest.obj().mockImplementationAt('foo', 'bar', function (this: CallState) {
+      const [fooArgs] = this.callPath;
+      return `Hello ${fooArgs[1]}!`;
+    });
+
+    // Test suite will fail if type does not match
+    const result = greetChild(mock, 'John');
+
+    expect(result).toBe('Hello John!');
+  });
 });

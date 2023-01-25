@@ -53,6 +53,7 @@ const objNestedInternal = <Shape extends Record<string, unknown>, Strict extends
         case 'mockGetValueAt':
           return addRegistration(target, value => value);
         case 'mockStrict':
+        case 'mockExplicit':
           return setStrictness(target, true);
         case 'mockImplicit':
           return setStrictness(target, false);
