@@ -68,6 +68,21 @@ describe('object mock tests', () => {
     expect(same).toBe(mock);
   });
 
+  it('can set nullish value at a given path', () => {
+    const value = undefined;
+    const path = ['foo', 'bar'] as const;
+    const mock = nest.obj().mockReturnValueAt(...path, value);
+
+    const result = mock.foo('a').bar('b');
+
+    expect(result).toBe(undefined);
+    expect(mock).toHaveBeenCalledTimes(1);
+    expect(mock).toHaveBeenNestedCalledWith([
+      ['foo', 'a'],
+      ['bar', 'b'],
+    ]);
+  });
+
   it('can perform nested expectations if the given return value is a nest mock', () => {
     const value = nest.curry(() => nest.obj(), 4);
     const path = ['foo', 'bar'] as const;

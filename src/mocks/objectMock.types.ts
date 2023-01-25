@@ -36,6 +36,8 @@ type SetStrictMode<Shape, Strict extends boolean> = {
     : Shape[K];
 };
 
+type ever = {} | null | undefined;
+
 /**
  * Mock for objects and their nested children
  */
@@ -59,7 +61,7 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
    * @param {any} value return value at the given path
    * @example mock.mockReturnValueAt('foo', 'bar', 42)
    */
-  mockReturnValueAt<Props extends Path, Value extends {}, I extends (...args: any[]) => Value = (...args: any[]) => Value>(
+  mockReturnValueAt<Props extends Path, Value extends ever, I extends (...args: any[]) => Value = (...args: any[]) => Value>(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, I>, Strict>;
   /**
@@ -70,7 +72,7 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
    */
   mockResolvedValueAt<
     Props extends Path,
-    Value extends {},
+    Value extends ever,
     I extends (...args: any[]) => Promise<Value> = (...args: any[]) => Promise<Value>,
   >(
     ...args: [...Props, Value]
@@ -83,7 +85,7 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
    */
   mockRejectedValueAt<
     Props extends Path,
-    Value extends {},
+    Value extends ever,
     I extends (...args: any[]) => Promise<Value> = (...args: any[]) => Promise<Value>,
   >(
     ...args: [...Props, Value]
@@ -94,7 +96,7 @@ export type ObjectMock<Shape, Strict extends boolean> = NoFunc<NestingMock> & {
    * @param {any} value property value at the given path
    * @example mock.mockReturnValueAt('foo', 'bar', 42)
    */
-  mockGetValueAt<Props extends Path, Value>(
+  mockGetValueAt<Props extends Path, Value extends ever>(
     ...args: [...Props, Value]
   ): ObjectMock<WithPath<Shape, Strict, Props, Value>, Strict>;
   /**
