@@ -1,6 +1,6 @@
 {
   "name": "jest-nest",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "jest mock for curried and chained functions",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
