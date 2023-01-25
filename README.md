@@ -272,6 +272,10 @@ declare global {
 
 ## Version history
 
+### v2.2.3
+
+- Support jest version >=26.6.3
+
 ### v2.2
 
 - Object mocks
